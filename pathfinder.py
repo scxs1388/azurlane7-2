@@ -1,6 +1,10 @@
-import pyautogui
+import ctypes
+import logging
+import os
+import sys
 import time
-from PIL import Image
+import pyautogui
+
 
 object_index = [
     [(0, 0), "A1"], [(0, 2), "C1"], [(0, 4), "E1"], [(0, 5), "F1"],
@@ -53,14 +57,14 @@ coordinates = {
     "Start1": [710, 555],
     "Start2": [1203, 360],
     "Boss1": [1160, 420],
-    "Boss2": [665, 620]
-    "7-2Select": [],
-    "7-2Confirm": []
-    "WeighAnchor": []
-    "TeamChange": [],
-    "AssignmentVerify": [],
+    "Boss2": [665, 620],
+    "7-2Select": [850, 400],
+    "ImmediateStart": [1200, 640],
+    "WeighAnchor": [1275, 700],
+    "TeamChange": [1250, 970],
+    "AssignmentVerify": [970, 610],
     "VictoryPoint": [1350, 275],
-    "VictoryConfirm": [],
+    "VictoryConfirm": [1300, 740],
     "SRPoint": [1362, 142]
 }
 
@@ -100,7 +104,7 @@ category_colors = {
     "E1": ["EFEBEF", "443F44", "C6AE5D"],
     "E3": ["EAE8EA", "3C3C3C", "CDA360"],
     "F1": ["EFEBEF", "453E45", "C4B05D"],
-    "F4": ["EBE9EE", "484648", "66ABD1"],
+    "F4": ["EBE9EE", "484648", "D1AB66"],
     "F5": ["DCDDE2", "403D40", "C19852"],
     "G2": ["ECE8EC", "3A343A", "D1C071"],
     "G3": ["ECE8EC", "434343", "C9A65A"]
@@ -108,14 +112,21 @@ category_colors = {
 
 function_colors = {
     "Team2": "FFFFFF",
-    "VictoryPoint": "B58263",
-    "SR": "844D5A",
-    "SSR": "3D7092"
+    "VictoryPoint": "6382B5",
+    "SR": "5A4D84",
+    "SSR": "92703D"
 }
 
 
+def is_admin():
+    try:
+        return ctypes.windll.shell32.IsUserAnAdmin()
+    except:
+        return False
+
+
 def get_color(image, x, y):
-    r, g, b, a = image.getpixel((x, y))
+    r, g, b = image.getpixel((x, y))
     return (str(hex(r))[2:].zfill(2) + str(hex(g))[2:].zfill(2) + str(hex(b))[2:].zfill(2)).upper()
 
 
@@ -179,13 +190,13 @@ def find_top_priority_enemy(v, enemy_list):
     return sorted(enemy_list, key=get_category)[-1]
 
 
-def scan_map(v, index):
+def scan_map(v):
     map_image = pyautogui.screenshot()
     # map_image = Image.open("C:/Users/10950/OneDrive/Pictures/untitled.png")
     for i, ei in enumerate(object_index[:14]):
         if v[i] == 0:
             category_flag, level_flag, category = False, False, 0
-            level_color = [get_color(map_image, coordinates[ei[1]][0] + offsets["level" + str(i)][0], coordinates[ei[1]][1] + offsets["level" + str(i)][1]) for i in range(1, 4)]
+            level_color = [get_color(map_image, coordinates[ei[1]][0] + offsets[f"level{i}"][0], coordinates[ei[1]][1] + offsets[f"level{i}"][1]) for i in range(1, 4)]
             category_color = get_color(map_image, coordinates[ei[1]][0] + offsets["category"][0], coordinates[ei[1]][1] + offsets["category"][1])
             for j, c in enumerate(category_colors[ei[1]]):
                 if color_match(category_color, c):
@@ -199,28 +210,27 @@ def scan_map(v, index):
                     break
             if category_flag and level_flag:
                 v[i] = category
-    if index == 2:
+    if v[-1] == -1:
         team2_position1_color = get_color(map_image, coordinates["Start1"][0], coordinates["Start1"][1])
         team2_position2_color = get_color(map_image, coordinates["Start2"][0], coordinates["Start2"][1])
         if color_match(team2_position1_color, function_colors["Team2"]):
-            v[-1] = 0
-        if color_match(team2_position2_color, function_colors["Team2"]):
             v[-1] = 1
+        if color_match(team2_position2_color, function_colors["Team2"]):
+            v[-1] = 2
     return v
 
 
 def move(target):
-    for i in range(len(target[1][1:])):
-        target_x = coordinates[object_index[target[0]][1]][0] + offsets["move"][0]
-        target_y = coordinates[object_index[target[0]][1]][1] + offsets["move"][1]
+    for i in range(1, len(target[1])):
+        target_x = coordinates[object_index[target[1][i]][1]][0] + offsets["move"][0]
+        target_y = coordinates[object_index[target[1][i]][1]][1] + offsets["move"][1]
         distance = abs(object_index[target[1][i]][0][0] - object_index[target[1][i - 1]][0][1]) + abs(object_index[target[1][i]][0][1] - object_index[target[1][i - 1]][0][1])
         pyautogui.leftClick(target_x, target_y)
         time.sleep((distance + 1) / 2)
-        # print(f"moveto {target_x}, {target_y}")
 
 
 def victory():
-    time.sleep(20)
+    time.sleep(5)
     victory_flag = False
     duration_time = 0
     while not victory_flag:
@@ -235,10 +245,10 @@ def victory():
     pyautogui.leftClick(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1])
     time.sleep(2.25)
     current_image = pyautogui.screenshot()
-    if color_match(get_color(current_iamge, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SR"]):
+    if color_match(get_color(current_image, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SR"]):
         pyautogui.leftClick(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1])
         time.sleep(2.25)
-    elif color_match(get_color(current_iamge, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SSR"]):
+    elif color_match(get_color(current_image, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SSR"]):
         pyautogui.leftClick(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1])
         time.sleep(2.25)
     pyautogui.leftClick(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1])
@@ -247,14 +257,16 @@ def victory():
     time.sleep(3)
     
 
-def middle_battle(v, index):
-    v = scan_map(v, index)
+def battle(v, index):
+    v = scan_map(v)
+    print(v)
     if index == 1:
-        enemy_list = [[i, [i, i]] for i, ei in enumerate(v[2:14]) if 1 <= ei <= 9]
+        enemy_list = [[i, [i, i]] for i, ei in enumerate(v[1:14]) if 1 <= ei <= 9]
         target = find_top_priority_enemy(v, enemy_list)
         move(target)
         victory()
         v[target[0]] = 12
+        v[-1] = -1
     if 2 <= index <= 4:
         enemy_list = find_reachable_target(v, index)
         target = find_top_priority_enemy(v, enemy_list)
@@ -268,35 +280,29 @@ def middle_battle(v, index):
             move(item)
         enemy_list = [[i, [i, i]] for i, ei in enumerate(v[:14]) if 1 <= ei <= 9]
         target = find_top_priority_enemy(v, enemy_list)
-        move_target()
+        move(target)
         victory()
         v[v.index(12)] = 11
         v[target[0]] = 12
+    if index == 6:
+        pyautogui.leftClick(coordinates[f"Boss{v[-1]}"][0], coordinates[f"Boss{v[-1]}"][1])
+        victory()
     return v
-
-
-def boss_battle(team2_position):
-    pyautogui.leftClick(x, y)  #
-    time.sleep(1.5)
-    if team2_position == 0:
-        pyautogui.leftClick(coordinates["Boss1"][0], coordinates["Boss1"][1])
-    else:
-        pyautogui.leftClick(coordinates["Boss2"][0], coordinates["Boss2"][1])
 
 
 def start():
     time.sleep(0.5)
     pyautogui.leftClick(coordinates["7-2Select"][0], coordinates["7-2Select"][1])
     time.sleep(0.5)
-    pyautogui.leftClick(coordinates["7-2Confirm"][0], coordinates["7-2Confirm"][1])
+    pyautogui.leftClick(coordinates["ImmediateStart"][0], coordinates["ImmediateStart"][1])
     time.sleep(0.5)
     pyautogui.leftClick(coordinates["WeighAnchor"][0], coordinates["WeighAnchor"][1])
     time.sleep(1)
     pyautogui.leftClick(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1])
-    time.sleep(1)
+    time.sleep(3)
 
 
-def end(res):
+def end():
     time.sleep(2)
 
 
@@ -310,18 +316,24 @@ def run():
     # scrap = 11
     # team1 = 12
     # obstacle = 99
-    v = [0 for i in range(14)] + [10 for i in range(4)] + [0]
-    res = []
-    
+    time.sleep(5)
     start()
-    v = middle_battle(v, 1)
-    v = middle_battle(v, 2)
-    v = middle_battle(v, 3)
-    v = middle_battle(v, 4)
-    v = middle_battle(v, 5)
-    boss_battle()
+    v = [0 for i in range(14)] + [10 for i in range(4)] + [0]
+    v = battle(v, 1)
+    v = battle(v, 2)
+    v = battle(v, 3)
+    v = battle(v, 4)
+    v = battle(v, 5)
+    v = battle(v, 6)
     end()
 
 
 if __name__ == "__main__":
-    run()
+    if is_admin():
+        run()
+    else:
+        if sys.version_info[0] == 3:
+            ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+            run()
+        # else:  # in python2.x
+        #     ctypes.windll.shell32.ShellExecuteW(None, u"runas", unicode(sys.executable), unicode(__file__), None, 1)
