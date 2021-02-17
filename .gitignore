@@ -130,3 +130,7 @@ dmypy.json
 
 # VSCode Settings
 .vscode
+
+# output files
+reward_data.csv
+image/*
