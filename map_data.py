@@ -1,4 +1,5 @@
 # map object indices list
+# [(matrix index x, matrix index y), game map indices "yx"]
 object_index = [
     [(0, 0), "A1"], [(0, 2), "C1"], [(0, 4), "E1"], [(0, 5), "F1"],
     [(1, 6), "G2"],
@@ -8,6 +9,37 @@ object_index = [
     [(4, 4), "E5"],
     [(1, 0), "A2"], [(1, 3), "D2"], [(2, 7), "H3"], [(3, 3), "D4"]
 ]
+
+# map object hashcode list
+# l: light, m: main, t: treasure
+object_code = {
+    "blank": 0,
+    "l1": 1,
+    "l2": 2,
+    "l3": 3,
+    "m1": 4,
+    "m2": 5,
+    "m3": 6,
+    "t1": 7,
+    "t2": 8,
+    "t3": 9,
+    "item": 10,
+    "scrap": 11,
+    "team1": 12
+}
+
+# enemy priority ranking map
+enemy_mapping = {
+    object_code["l1"]: 2,
+    object_code["l2"]: 3,
+    object_code["l3"]: 6,
+    object_code["m1"]: 4,
+    object_code["m2"]: 5,
+    object_code["m3"]: 7,
+    object_code["t1"]: 1,
+    object_code["t2"]: 8,
+    object_code["t3"]: 9
+}
 
 # object adjacency list
 e = [
@@ -35,7 +67,7 @@ e = [
 # coordinates of click and recognition points
 coordinates = {
     "A1": [717, 397],
-    "A2": [712, 400],
+    "A2": [712, 444],
     "A3": [708, 492],
     "B4": [775, 542],
     "C1": [852, 397],
@@ -60,10 +92,13 @@ coordinates = {
     "7-2Select": [850, 400],
     "ImmediateStart": [1200, 640],
     "WeighAnchor": [1275, 700],
-    "TeamChange": [1250, 970],
+    "Withdraw": [1100, 970],
+    "SwitchOver": [1250, 970],
     "AssignmentVerify": [970, 610],
     "VictoryPoint": [1350, 275],
     "VictoryConfirm": [1300, 740],
+    "DefeatConfirm": [950, 700],
+    "Confirm": [1075, 630],
     "SRPoint": [1362, 142]
 }
 
@@ -118,6 +153,7 @@ category_colors = {
 function_colors = {
     "Team2": "FFFFFF",
     "VictoryPoint": "6382B5",
+    "DefeatPoint": "9C4D4D",
     "SR": "5A4D84",
     "SSR": "92703D"
 }
