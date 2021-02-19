@@ -134,3 +134,4 @@ dmypy.json
 # output files
 reward_data.csv
 image/*
+image_sample/*
