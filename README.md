@@ -13,12 +13,12 @@ A Python-based RPA script for Azur Lane level 7-2.
     - PyAutoGUI
 
 ## Usage
-1. Install Python 3
-2. Clone this repository:
+1. Clone this repository:
 ```git
 git clone https://github.com/scxs1388/azurlane7-2.git
 ```
-3. Install PyAutoGUI in cmd
+2. Install Python3 or create Anaconda3 environment (Python Recommended Version: 3.6.12)
+3. 
 ```
 pip install pyautogui
 ```
