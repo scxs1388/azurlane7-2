@@ -2,7 +2,7 @@ import sys
 import os
 
 # mode
-RECORD_ITEM = False
+RECORD_ITEM = True
 
 # path 
 PATH = {

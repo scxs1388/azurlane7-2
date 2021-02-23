@@ -4,6 +4,7 @@ import sys
 import time
 from datetime import datetime
 
+from copy import deepcopy
 import cv2 as cv
 import numpy as np
 import pandas as pd
@@ -12,41 +13,45 @@ from tqdm import tqdm
 from settings import PATH, COMMIT_DATA_SETTINGS, STANDARD_COMMIT_DATA_DICT
 
 sample_items = [
-    ("oxycola", os.path.join(PATH["temp_image_dir"], "oxycola.png")),
-    ("coolant", os.path.join(PATH["temp_image_dir"], "coolant.png")),
-    ("tempura", os.path.join(PATH["temp_image_dir"], "tempura.png")),
-    ("repair", os.path.join(PATH["temp_image_dir"], "repair.png")),
-    ("kit_t1", os.path.join(PATH["temp_image_dir"], "kit_t1.png")),
-    ("kit_t2", os.path.join(PATH["temp_image_dir"], "kit_t2.png")),
-    ("kit_t3", os.path.join(PATH["temp_image_dir"], "kit_t3.png")),
-    ("coin", os.path.join(PATH["temp_image_dir"], "coin.png")),
-    ("j113", os.path.join(PATH["temp_image_dir"], "j113.png"))
+    ("oxycola", os.path.join(PATH["sample_image_dir"], "oxycola.png")),
+    ("coolant", os.path.join(PATH["sample_image_dir"], "coolant.png")),
+    ("tempura", os.path.join(PATH["sample_image_dir"], "tempura.png")),
+    ("repair", os.path.join(PATH["sample_image_dir"], "repair.png")),
+    ("kit_t1", os.path.join(PATH["sample_image_dir"], "kit_t1.png")),
+    ("kit_t2", os.path.join(PATH["sample_image_dir"], "kit_t2.png")),
+    ("kit_t3", os.path.join(PATH["sample_image_dir"], "kit_t3.png")),
+    ("coin", os.path.join(PATH["sample_image_dir"], "coin.png")),
+    ("j113", os.path.join(PATH["sample_image_dir"], "j113.png"))
 ]
 
 
 def ocr_scan(filepath, is_accurate):
+    word_list = []
     f = open(filepath, "rb")
     img = base64.b64encode(f.read())
     if len(COMMIT_DATA_SETTINGS["client_id"]) == 0:
         file = open(COMMIT_DATA_SETTINGS["client_info_file_path"])
         COMMIT_DATA_SETTINGS["client_id"] = file.readline()[:-1]
         COMMIT_DATA_SETTINGS["client_secret"] = file.readline()[:-1]
-    url = f"https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={COMMIT_DATA_SETTINGS['client_id']}&client_secret={COMMIT_DATA_SETTINGS['client_secret']}"
+        print(COMMIT_DATA_SETTINGS["client_id"], COMMIT_DATA_SETTINGS["client_secret"])
+    client_id = COMMIT_DATA_SETTINGS["client_id"]
+    client_secret = COMMIT_DATA_SETTINGS["client_secret"]
+    url = f"https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={client_id}&client_secret={client_secret}"
     response = requests.get(url)
-    if response:
+    if response.status_code == 200:
         access_token = (response.json()["access_token"])
-    if is_accurate:
-        host = f"https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?access_token={access_token}"
-    else:
-        host = f"https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic?access_token={access_token}"
-    headers = {
-        "Content-Type": "application/x-www-form-urlencoded"
-    }
-    data = {
-        "image": img
-    }
-    res = requests.post(url=host, data=data, headers=headers)
-    word_list = res.json()["words_result"]
+        if is_accurate:
+            host = f"https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?access_token={access_token}"
+        else:
+            host = f"https://aip.baidubce.com/rest/2.0/ocr/v1/general_basic?access_token={access_token}"
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        data = {
+            "image": img
+        }
+        res = requests.post(url=host, data=data, headers=headers)
+        word_list = res.json()["words_result"]
     return word_list
 
 
@@ -125,8 +130,8 @@ def item_check(path, is_boss):
 def get_commit_data_dict(image_file_dir):
     item_data = []
     coin_data = [0, 0, 0, 0]
-    commit_data_dict = STANDARD_COMMIT_DATA_DICT
-    commit_data_dict["user"] = COMMIT_DATA_SETTINGS["USER"]
+    commit_data_dict = deepcopy(STANDARD_COMMIT_DATA_DICT)
+    commit_data_dict["user"] = COMMIT_DATA_SETTINGS["user"]
     commit_data_dict["datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     for i, f in enumerate(os.listdir(image_file_dir)):
         image_file_path = os.path.join(image_file_dir, f)
