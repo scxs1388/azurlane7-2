@@ -228,7 +228,7 @@ class AzurlaneLevel7_2():
         if RECORD_ITEM:
             self.savedir = os.path.join(PATH["commit_image_dir"], str(len(os.listdir(PATH["commit_image_dir"])) + 1))
         self.number = number
-        self.item_count = 0
+        # self.item_count = 0
 
     def scan_map(self):
         """
@@ -394,7 +394,7 @@ class AzurlaneLevel7_2():
                 raise SevereDamageException()
         click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.25)
         if self.index == 6 and RECORD_ITEM:
-            self.save_image(self.item_count + 1)
+            self.save_image(5)
         click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.75)
         current_image = pyautogui.screenshot()
         if color_match(get_color(current_image, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SR"]):
@@ -448,10 +448,10 @@ class AzurlaneLevel7_2():
             for i, item in enumerate(item_list):
                 self.move(item, 0.25)
                 if RECORD_ITEM:
-                    self.save_image(self.item_count + 1)
+                    self.save_image(i + 1)
                 time.sleep(1.25)
                 click(960, 810, 1.0)
-                self.item_count += 1
+                # self.item_count += 1
             enemy_list = [[i, [i, i]] for i, ei in enumerate(self.v[:14]) if object_code["l1"] <= ei <= object_code["t3"]]
             target = self.find_top_priority_enemy(enemy_list)
             self.move(target, 0.25)
@@ -459,15 +459,15 @@ class AzurlaneLevel7_2():
             self.v[self.v.index(object_code["team1"])] = object_code["scrap"]
             self.v[target[0]] = object_code["team1"]
         if self.index == 6:
-            if self.item_count < 4:
-                item_list = self.find_reachable_target()
-                for i, item in enumerate(item_list):
-                    self.move(item, 1.25)
-                    if RECORD_ITEM:
-                        self.save_image(self.item_count + i + 1)
-                    time.sleep(1.25)
-                    click(960, 810, 1.0)
-                    self.item_count += 1
+            # if self.item_count < 4:
+            #     item_list = self.find_reachable_target()
+            #     for i, item in enumerate(item_list):
+            #         self.move(item, 1.25)
+            #         if RECORD_ITEM:
+            #             self.save_image(self.item_count + i + 1)
+            #         time.sleep(1.25)
+            #         click(960, 810, 1.0)
+            #         self.item_count += 1
             click(coordinates["SwitchOver"][0], coordinates["SwitchOver"][1], 1.75)
             click(coordinates[f"Boss{self.v[-1]}"][0], coordinates[f"Boss{self.v[-1]}"][1], 2)
             self.victory()
