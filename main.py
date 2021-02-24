@@ -360,6 +360,11 @@ class AzurlaneLevel7_2():
             pyautogui.screenshot(os.path.join(self.savedir, f"item_{num}.png"), region=(924, 470, 72, 98))
         time.sleep(0.5)
 
+    def record_logger(self):
+        if RECORD_ITEM:
+            file = open(os.path.join(self.savedir, "log.txt"), "a")
+            
+
     def move(self, target, delay):
         """
         Moving On Map
