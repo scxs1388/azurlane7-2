@@ -27,13 +27,14 @@ sample_items = [
 
 def ocr_scan(filepath, is_accurate):
     word_list = []
-    f = open(filepath, "rb")
-    img = base64.b64encode(f.read())
+    with open(filepath, "rb") as img_file:
+        img_file = open(filepath, "rb")
+        img = base64.b64encode(img_file.read())
     if len(COMMIT_DATA_SETTINGS["client_id"]) == 0:
-        file = open(COMMIT_DATA_SETTINGS["client_info_file_path"])
-        COMMIT_DATA_SETTINGS["client_id"] = file.readline()[:-1]
-        COMMIT_DATA_SETTINGS["client_secret"] = file.readline()[:-1]
-        print(COMMIT_DATA_SETTINGS["client_id"], COMMIT_DATA_SETTINGS["client_secret"])
+        with open(COMMIT_DATA_SETTINGS["client_info_file_path"], encoding="utf-8") as file:
+            data = file.readlines()
+            COMMIT_DATA_SETTINGS["client_id"] = data[0][:-1]
+            COMMIT_DATA_SETTINGS["client_secret"] = data[1][:-1]
     client_id = COMMIT_DATA_SETTINGS["client_id"]
     client_secret = COMMIT_DATA_SETTINGS["client_secret"]
     url = f"https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id={client_id}&client_secret={client_secret}"
@@ -75,22 +76,19 @@ def item_check(path, is_boss):
                 num_img = src_img[max_loc[1] + 46: max_loc[1] + 72, max_loc[0] + 50: max_loc[0] + 72]
                 num_img_path = os.path.join(PATH["temp_image_dir"], item[0] + ".png")
                 cv.imwrite(num_img_path, num_img)
-                time.sleep(0.5)
+                time.sleep(0.2)
                 ocr_res = ocr_scan(num_img_path, True)
+                res = [item[0], -1, False]
                 if len(ocr_res) > 0:
                     num = ocr_res[0]["words"]
                     if num.isdigit():
                         res = [item[0], int(num), True]
-                    else:
-                        res = [item[0], -1, False]
-                else:
-                    res = [item[0], 0, True]
             elif item[0] == "coin":
                 max_loc = cv.minMaxLoc(r)[3]
                 num_img = src_img[max_loc[1] + 30: max_loc[1] + 75, max_loc[0] + 30: max_loc[0] + 72]
                 num_img_path = os.path.join(PATH["temp_image_dir"], item[0] + ".png")
                 cv.imwrite(num_img_path, num_img)
-                time.sleep(1.0)
+                time.sleep(0.2)
                 ocr_res = ocr_scan(num_img_path, True)
                 res = [item[0], -99999, False]
                 if len(ocr_res) > 0:
@@ -105,7 +103,7 @@ def item_check(path, is_boss):
                 num_img = src_img[max_loc[1] + 72: max_loc[1] + 97, max_loc[0] + 1: max_loc[0] + 71]
                 num_img_path = os.path.join(PATH["temp_image_dir"], item[0] + ".png")
                 cv.imwrite(num_img_path, num_img)
-                time.sleep(0.5)
+                time.sleep(0.2)
                 ocr_res = ocr_scan(num_img_path, False)
                 res = ["blk3", -99999, False]
                 if len(ocr_res) > 0:

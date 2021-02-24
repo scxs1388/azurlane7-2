@@ -32,12 +32,13 @@ def update_local_submit_data():
     submit_data_flie = pd.read_csv(PATH["submit_data_file_path"], encoding="GB2312")
     df = pd.DataFrame(submit_data_flie)
     if len(SUBMIT_DATA_SETTINGS["host"]) == 0:
-        file = open(SUBMIT_DATA_SETTINGS["submit_info_file_path"])
-        SUBMIT_DATA_SETTINGS["verify_code"] = file.readline()[:-1]
-        SUBMIT_DATA_SETTINGS["host"] = file.readline()[:-1]
-        SUBMIT_DATA_SETTINGS["user"] = file.readline()[:-1]
-        SUBMIT_DATA_SETTINGS["password"] = file.readline()[:-1]
-        SUBMIT_DATA_SETTINGS["database"] = file.readline()[:-1]
+        with open(SUBMIT_DATA_SETTINGS["submit_info_file_path"], encoding="utf-8") as file:
+            data = file.readlines()
+            SUBMIT_DATA_SETTINGS["verify_code"] = data[0][:-1]
+            SUBMIT_DATA_SETTINGS["host"] = data[1][:-1]
+            SUBMIT_DATA_SETTINGS["user"] = data[2][:-1]
+            SUBMIT_DATA_SETTINGS["password"] = data[3][:-1]
+            SUBMIT_DATA_SETTINGS["database"] = data[4][:-1]
     conn = pymysql.connect(
         host=SUBMIT_DATA_SETTINGS["host"],
         user=SUBMIT_DATA_SETTINGS["user"],
