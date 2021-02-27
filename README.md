@@ -42,7 +42,7 @@ pip install tqdm
 pip install baidu-aip
 pip install PyMySQL
 ```
-10. Set the option `RECORD_ITEM` to `True` in the file `settings.py`
+10. Set the option `RECORD_ITEM` to `True` in the file `settings.py`.
 11. Record Data
 
     All screenshot images will be saved in the directory `image/commit_image`.
@@ -57,8 +57,8 @@ pip install PyMySQL
     - the file `data/commit_data.csv` will be reset, the file `data/submit_data.csv` will be updated, the image file directories in `image/commit_image` will be moved to `image/submit_image`. 
 
 ## 3 Who's Afraid Of 7-2 ?
-a website to display the statistics of the dropped items in level 7-2. url: `https://www.scxs-studio.com/p/7-2/`
+a website to display the statistics of the dropped items in level 7-2. url: https://www.scxs-studio.com/p/7-2/
 
-## 4 About developers
-Azurlane(CN) 水星行动 VirtualRiot
+## 4 Developer
+Azur Lane (CN) 水星行动 VirtualRiot
         
