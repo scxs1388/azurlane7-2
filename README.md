@@ -17,7 +17,7 @@ A Python-based RPA script for Azur Lane level 7-2.
 ```git
 git clone https://github.com/scxs1388/azurlane7-2.git
 ```
-2. Install _Python3_ or create Anaconda3 environment. (Recommended Python Version: 3.6.12)
+2. Install Python3 or create Anaconda3 environment. (Recommended Python Version: 3.6.12)
 ### 2.1 Simple Usage (data recording excluded)
 3. Install PyAutoGUI.
 ```
