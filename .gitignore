@@ -142,3 +142,4 @@ ttest.py
 # output files
 data/*
 image/*
+move.txt
