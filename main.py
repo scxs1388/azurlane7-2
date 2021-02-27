@@ -48,29 +48,6 @@ enemy_mapping = {
     object_code["t3"]: 9
 }
 
-# object adjacency list
-e = [
-    [15],  # 0
-    [16, 2],  # 1
-    [1, 16, 8, 4, 3, 7, 10],  # 2
-    [2, 4, 7, 8 ,10, 17, 16],  # 3
-    [2, 3, 7, 8, 10, 17, 16],  # 4
-    [6, 9, 11, 15],  # 5
-    [18, 5, 7, 9, 11, 16],  # 6
-    [2, 8, 3, 4, 10, 12, 13, 16, 18, 6],  # 7
-    [2, 3, 7, 10, 17, 16],  # 8, 4
-    [5, 6, 11, 18],  # 9
-    [7, 8, 12, 13, 2, 16, 18, 3, 4],  # 10
-    [5, 6, 9, 12, 18],  # 11
-    [11, 14, 13, 18],  # 12
-    [7, 12, 18],  # 13, 10
-    [7, 10],  # 14
-    [0, 5],  # 15
-    [1, 2, 6, 7, 8, 4, 3, 18],  # 16
-    [8, 4, 3],  # 17
-    [6, 7, 9, 10, 11, 12, 13, 16]  # 18
-]
-
 # coordinates of click and recognition points
 coordinates = {
     "A1": [717, 397],
@@ -228,7 +205,28 @@ class AzurlaneLevel7_2():
         if RECORD_ITEM:
             self.savedir = os.path.join(PATH["commit_image_dir"], str(len(os.listdir(PATH["commit_image_dir"])) + 1))
         self.number = number
-        # self.item_count = 0
+        # object adjacency list
+        self.e = [
+            [15],  # 0
+            [16, 2],  # 1
+            [1, 16, 8, 4, 3, 7, 10],  # 2
+            [2, 4, 7, 8 ,10, 17, 16],  # 3
+            [2, 3, 7, 8, 10, 17, 16],  # 4
+            [6, 9, 11, 15],  # 5
+            [18, 5, 7, 9, 11, 16],  # 6
+            [2, 8, 3, 4, 10, 12, 13, 16, 18, 6],  # 7
+            [2, 3, 7, 10, 17, 16],  # 8, 4
+            [5, 6, 11, 18],  # 9
+            [7, 8, 12, 13, 2, 16, 18, 3, 4],  # 10
+            [5, 6, 9, 12, 18],  # 11
+            [11, 14, 13, 18],  # 12
+            [7, 12, 18],  # 13, 10
+            [7, 10],  # 14
+            [0, 5],  # 15
+            [1, 2, 6, 7, 8, 4, 3, 18],  # 16
+            [8, 4, 3],  # 17
+            [6, 7, 9, 10, 11, 12, 13, 16]  # 18
+        ]
 
     def scan_map(self):
         """
@@ -269,7 +267,7 @@ class AzurlaneLevel7_2():
         :param index: battle index
         :return: [enemy object list]
         """
-        if self.index <= 4:
+        if self.index <= 5:
             enemy_list = []
             flag = [False for i in range(len(self.v))]
             queue = [[self.v.index(object_code["team1"]), [self.v.index(object_code["team1"])]]]
@@ -278,7 +276,7 @@ class AzurlaneLevel7_2():
                 length = len(queue)
                 while length > 0:
                     temp = queue.pop(0)
-                    for i in e[temp[0]]:
+                    for i in self.e[temp[0]]:
                         if not flag[i]:
                             flag[i] = True
                             if self.v[i] == object_code["blank"] or self.v[i] == object_code["scrap"]:
@@ -303,7 +301,7 @@ class AzurlaneLevel7_2():
                     length = len(queue)
                     while length > 0 and not addone_flag:
                         temp = queue.pop(0)
-                        for i in e[temp[0]]:
+                        for i in self.e[temp[0]]:
                             if not flag[i]:
                                 flag[i] = True
                                 if self.v[i] == object_code["blank"] or self.v[i] == object_code["scrap"] or self.v[i] == object_code["team1"]:
@@ -331,6 +329,7 @@ class AzurlaneLevel7_2():
             x_distance = sum([abs(object_index[ei[1][i]][0][0] - object_index[ei[1][i - 1]][0][0]) for i in range(1, len(ei[1]))])
             y_distance = sum([abs(object_index[ei[1][i]][0][1] - object_index[ei[1][i - 1]][0][1]) for i in range(1, len(ei[1]))])
             return x_distance + y_distance
+        
         keypoint123_enemy = []
         keypoint4_enemy = []
         keypoint4_flag = False
@@ -360,9 +359,48 @@ class AzurlaneLevel7_2():
             pyautogui.screenshot(os.path.join(self.savedir, f"item_{num}.png"), region=(924, 470, 72, 98))
         time.sleep(0.5)
 
-    def record_logger(self):
-        if RECORD_ITEM:
-            file = open(os.path.join(self.savedir, "log.txt"), "a")
+    # def record_logger(self, enemy_list, item_list, target):
+    #     with open(os.path.join(PATH["root_dir"], "log.txt"), "a") as file:
+    #         fel = []
+    #         team2 = ["  ", "  "]
+    #         for enemy in self.v[:-1]:
+    #             if enemy == 0:
+    #                 fel.append("  ")
+    #             elif object_code["l1"] <= enemy <= object_code["t3"]:
+    #                 fel.append(f"e{enemy}")
+    #             elif enemy == object_code["scrap"]:
+    #                 fel.append("--")
+    #             elif enemy == object_code["team1"]:
+    #                 fel.append("T1")
+    #         if self.v[-1] == 1:
+    #             team2 = ["  ", "T2"]
+    #         elif self.v[-1] == 2:
+    #             team2 = ["T2", "  "]
+    #         file.writelines(f"==============={self.index}===============\n")
+    #         file.writelines("┌─┬─┬─┬─┬─┬─┬─┬─┐\n")
+    #         file.writelines(f"│{fel[0]}│□│{fel[1]}│  │{fel[2]}│{fel[3]}│  │{team2[0]}│\n")
+    #         file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
+    #         file.writelines(f"│？│□│□│？│  │  │{fel[4]}│  │\n")
+    #         file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
+    #         file.writelines(f"│{fel[5]}│  │{fel[6]}│BS│{fel[7]}│  │{fel[8]}│？│\n")
+    #         file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
+    #         file.writelines(f"│  │{fel[9]}│  │？│  │{fel[10]}│□│□│\n")
+    #         file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
+    #         file.writelines(f"│{team2[1]}│  │{fel[11]}│{fel[12]}│  │{fel[13]}│□│□│\n")
+    #         file.writelines("└─┴─┴─┴─┴─┴─┴─┴─┘\n")
+    #         file.writelines("\n")
+    #         if enemy_list:
+    #             file.writelines("enemy list:\n")
+    #             for ei in enemy_list:
+    #                 file.writelines(f"{str(ei)}\n")
+    #             file.writelines("\n")
+    #         if item_list:
+    #             file.writelines("item list:\n")
+    #             for ei in item_list:
+    #                 file.writelines(f"{str(ei)}\n")
+    #             file.writelines("\n")
+    #         file.writelines("target:\n")
+    #         file.writelines(f"{str(target)}\n\n")
             
 
     def move(self, target, delay):
@@ -406,7 +444,8 @@ class AzurlaneLevel7_2():
             click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.25)
         click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 2)
         click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1], 2.75)
-    
+
+
     def defeat(self):
         """
         Restart After Defeat
@@ -436,46 +475,36 @@ class AzurlaneLevel7_2():
             target = self.find_top_priority_enemy(enemy_list)
             self.move(target, 0.25)
             self.victory()
+            # self.record_logger(self, enemy_list, None, target)
             self.v[target[0]] = object_code["team1"]
             self.v[-1] = -1
-        if 2 <= self.index <= 4:
+        if 2 <= self.index <= 5:
             self.scan_map()
             enemy_list = self.find_reachable_target()
             target = self.find_top_priority_enemy(enemy_list)
             self.move(target, 0.25)
             self.victory()
-            self.v[self.v.index(object_code["team1"])] = object_code["scrap"]
-            self.v[target[0]] = object_code["team1"]
-        if self.index == 5:
-            if RECORD_ITEM:
-                os.mkdir(self.savedir)
-            item_list = self.find_reachable_target()
-            for i, item in enumerate(item_list):
-                self.move(item, 0.25)
-                if RECORD_ITEM:
-                    self.save_image(i + 1)
-                time.sleep(1.25)
-                click(960, 810, 1.0)
-                # self.item_count += 1
-            enemy_list = [[i, [i, i]] for i, ei in enumerate(self.v[:14]) if object_code["l1"] <= ei <= object_code["t3"]]
-            target = self.find_top_priority_enemy(enemy_list)
-            self.move(target, 0.25)
-            self.victory()
+            # self.record_logger(self, enemy_list, None, target)
             self.v[self.v.index(object_code["team1"])] = object_code["scrap"]
             self.v[target[0]] = object_code["team1"]
         if self.index == 6:
-            # if self.item_count < 4:
-            #     item_list = self.find_reachable_target()
-            #     for i, item in enumerate(item_list):
-            #         self.move(item, 1.25)
-            #         if RECORD_ITEM:
-            #             self.save_image(self.item_count + i + 1)
-            #         time.sleep(1.25)
-            #         click(960, 810, 1.0)
-            #         self.item_count += 1
+            self.e[6].remove(16)
+            self.e[16].remove(6)
+            self.e[6].remove(7)
+            self.e[7].remove(6)
+            self.e[16].remove(18)
+            self.e[18].remove(16)
+            item_list = self.find_reachable_target()
+            for i, item in enumerate(item_list):
+                self.move(item, 0.5)
+                if RECORD_ITEM:
+                    self.save_image(i + 1)
+                time.sleep(1.5)
+                click(960, 810, 1.0)
             click(coordinates["SwitchOver"][0], coordinates["SwitchOver"][1], 1.75)
             click(coordinates[f"Boss{self.v[-1]}"][0], coordinates[f"Boss{self.v[-1]}"][1], 2)
             self.victory()
+            # self.record_logger(self, None, item_list, None)
 
     def start(self):
         """
@@ -494,6 +523,8 @@ class AzurlaneLevel7_2():
         Single Entire 7-2 Process
         :return:
         """
+        if RECORD_ITEM:
+            os.mkdir(self.savedir)
         self.start()
         for i in range(1, 7):
             self.index = i
@@ -546,26 +577,25 @@ def check_dir():
         print("Done")
 
 
-def main(count):
+def main(start, count):
     """
     Main Function
     :param count: 7-2 times
     :return:
     """
-    c = 1
+    index = start
     try:
         level = None
-        while c <= count:
-            level = AzurlaneLevel7_2(c)
+        while index < count + start:
+            level = AzurlaneLevel7_2(index)
             level.run()
-            c += 1
+            index += 1
     except SevereDamageException:
         level.defeat()
-        main(count - c)
+        main(index + 1, count - index + start - 1)
 
 
 if __name__ == "__main__":
-    # python D:\Programming\Codefiles\pythonfiles\azurlane7-2\main.py
     try:
         if RECORD_ITEM:
             import shutil
@@ -578,7 +608,7 @@ if __name__ == "__main__":
         if text.isdigit():
             cnt = int(text)
             print(f"Target: {cnt} Times")
-            main(cnt)
+            main(1, cnt)
         else:
             raise RuntimeError
     except RuntimeError:

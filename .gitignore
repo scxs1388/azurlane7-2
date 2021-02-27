@@ -136,6 +136,9 @@ hand_record_data.py
 baidu_ai_client_info.txt
 submit_info.txt
 
+# test files
+ttest.py
+
 # output files
 data/*
 image/*
