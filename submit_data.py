@@ -54,7 +54,7 @@ def update_local_submit_data():
     skip_len = df.shape[0]
     if count > skip_len:
         df = df.iloc[:0]
-        sql = "SELECT * FROM record_data"
+        sql = f"SELECT * FROM record_data WHERE id > {skip_len}"
         cursor.execute(sql)
         for i in tqdm(range(count)):
             if i < skip_len:
