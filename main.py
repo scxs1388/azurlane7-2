@@ -3,7 +3,7 @@ import sys
 import time
 
 import pyautogui
-from settings import RECORD_ITEM, PATH
+from settings import RECORD_ITEM, RECORD_LOG, PATH
 
 # map object indices list
 # [(matrix index x, matrix index y), game map indices "yx"]
@@ -359,48 +359,48 @@ class AzurlaneLevel7_2():
             pyautogui.screenshot(os.path.join(self.savedir, f"item_{num}.png"), region=(924, 470, 72, 98))
         time.sleep(0.5)
 
-    # def record_logger(self, enemy_list, item_list, target):
-    #     with open(os.path.join(PATH["root_dir"], "log.txt"), "a") as file:
-    #         fel = []
-    #         team2 = ["  ", "  "]
-    #         for enemy in self.v[:-1]:
-    #             if enemy == 0:
-    #                 fel.append("  ")
-    #             elif object_code["l1"] <= enemy <= object_code["t3"]:
-    #                 fel.append(f"e{enemy}")
-    #             elif enemy == object_code["scrap"]:
-    #                 fel.append("--")
-    #             elif enemy == object_code["team1"]:
-    #                 fel.append("T1")
-    #         if self.v[-1] == 1:
-    #             team2 = ["  ", "T2"]
-    #         elif self.v[-1] == 2:
-    #             team2 = ["T2", "  "]
-    #         file.writelines(f"==============={self.index}===============\n")
-    #         file.writelines("┌─┬─┬─┬─┬─┬─┬─┬─┐\n")
-    #         file.writelines(f"│{fel[0]}│□│{fel[1]}│  │{fel[2]}│{fel[3]}│  │{team2[0]}│\n")
-    #         file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
-    #         file.writelines(f"│？│□│□│？│  │  │{fel[4]}│  │\n")
-    #         file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
-    #         file.writelines(f"│{fel[5]}│  │{fel[6]}│BS│{fel[7]}│  │{fel[8]}│？│\n")
-    #         file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
-    #         file.writelines(f"│  │{fel[9]}│  │？│  │{fel[10]}│□│□│\n")
-    #         file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
-    #         file.writelines(f"│{team2[1]}│  │{fel[11]}│{fel[12]}│  │{fel[13]}│□│□│\n")
-    #         file.writelines("└─┴─┴─┴─┴─┴─┴─┴─┘\n")
-    #         file.writelines("\n")
-    #         if enemy_list:
-    #             file.writelines("enemy list:\n")
-    #             for ei in enemy_list:
-    #                 file.writelines(f"{str(ei)}\n")
-    #             file.writelines("\n")
-    #         if item_list:
-    #             file.writelines("item list:\n")
-    #             for ei in item_list:
-    #                 file.writelines(f"{str(ei)}\n")
-    #             file.writelines("\n")
-    #         file.writelines("target:\n")
-    #         file.writelines(f"{str(target)}\n\n")
+    def record_logger(self, enemy_list, item_list, target):
+        with open(os.path.join(self.savedir, "log.txt"), "a") as file:
+            fel = []
+            team2 = ["  ", "  "]
+            for enemy in self.v[:-1]:
+                if enemy == 0:
+                    fel.append("  ")
+                elif object_code["l1"] <= enemy <= object_code["t3"]:
+                    fel.append(f"e{enemy}")
+                elif enemy == object_code["scrap"]:
+                    fel.append("--")
+                elif enemy == object_code["team1"]:
+                    fel.append("T1")
+            if self.v[-1] == 1:
+                team2 = ["  ", "T2"]
+            elif self.v[-1] == 2:
+                team2 = ["T2", "  "]
+            file.writelines(f"==============={self.index}===============\n")
+            file.writelines("┌─┬─┬─┬─┬─┬─┬─┬─┐\n")
+            file.writelines(f"│{fel[0]}│□│{fel[1]}│  │{fel[2]}│{fel[3]}│  │{team2[0]}│\n")
+            file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
+            file.writelines(f"│？│□│□│？│  │  │{fel[4]}│  │\n")
+            file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
+            file.writelines(f"│{fel[5]}│  │{fel[6]}│BS│{fel[7]}│  │{fel[8]}│？│\n")
+            file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
+            file.writelines(f"│  │{fel[9]}│  │？│  │{fel[10]}│□│□│\n")
+            file.writelines("├─┼─┼─┼─┼─┼─┼─┼─┤\n")
+            file.writelines(f"│{team2[1]}│  │{fel[11]}│{fel[12]}│  │{fel[13]}│□│□│\n")
+            file.writelines("└─┴─┴─┴─┴─┴─┴─┴─┘\n")
+            file.writelines("\n")
+            if enemy_list:
+                file.writelines("enemy list:\n")
+                for ei in enemy_list:
+                    file.writelines(f"{str(ei)}\n")
+                file.writelines("\n")
+            if item_list:
+                file.writelines("item list:\n")
+                for ei in item_list:
+                    file.writelines(f"{str(ei)}\n")
+                file.writelines("\n")
+            file.writelines("target:\n")
+            file.writelines(f"{str(target)}\n\n")
             
 
     def move(self, target, delay):
@@ -414,7 +414,7 @@ class AzurlaneLevel7_2():
             target_x = coordinates[object_index[target[1][i]][1]][0] + offsets["move"][0]
             target_y = coordinates[object_index[target[1][i]][1]][1] + offsets["move"][1]
             distance = abs(object_index[target[1][i]][0][0] - object_index[target[1][i - 1]][0][0]) + abs(object_index[target[1][i]][0][1] - object_index[target[1][i - 1]][0][1])
-            click(target_x, target_y, (distance + 1.0) / 2 + delay)
+            click(target_x, target_y, (distance + 0.8) / 2 + delay)
 
     def victory(self):
         """
@@ -435,13 +435,13 @@ class AzurlaneLevel7_2():
                 victory_flag = True
             if color_match(victory_point_color, function_colors["DefeatPoint"]):
                 raise SevereDamageException()
-        click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.25)
+        click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.0)
         if self.index == 6 and RECORD_ITEM:
             self.save_image(5)
-        click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.75)
+        click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.5)
         current_image = pyautogui.screenshot()
         if color_match(get_color(current_image, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SR"]):
-            click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.25)
+            click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.0)
         click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 2)
         click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1], 2.75)
 
@@ -473,18 +473,20 @@ class AzurlaneLevel7_2():
             self.scan_map()
             enemy_list = [[i, [i, i]] for i, ei in enumerate(self.v[:14]) if object_code["l1"] <= ei <= object_code["t3"] and i > 0]
             target = self.find_top_priority_enemy(enemy_list)
-            self.move(target, 0.25)
+            self.move(target, 0.1)
+            if RECORD_ITEM and RECORD_LOG:
+                self.record_logger(enemy_list, None, target)
             self.victory()
-            # self.record_logger(self, enemy_list, None, target)
             self.v[target[0]] = object_code["team1"]
             self.v[-1] = -1
         if 2 <= self.index <= 5:
             self.scan_map()
             enemy_list = self.find_reachable_target()
             target = self.find_top_priority_enemy(enemy_list)
-            self.move(target, 0.25)
+            self.move(target, 0.1)
+            if RECORD_ITEM and RECORD_LOG:
+                self.record_logger(enemy_list, None, target)
             self.victory()
-            # self.record_logger(self, enemy_list, None, target)
             self.v[self.v.index(object_code["team1"])] = object_code["scrap"]
             self.v[target[0]] = object_code["team1"]
         if self.index == 6:
@@ -496,15 +498,16 @@ class AzurlaneLevel7_2():
             self.e[18].remove(16)
             item_list = self.find_reachable_target()
             for i, item in enumerate(item_list):
-                self.move(item, 0.5)
+                self.move(item, 0.25)
                 if RECORD_ITEM:
                     self.save_image(i + 1)
                 time.sleep(1.5)
                 click(960, 810, 1.0)
             click(coordinates["SwitchOver"][0], coordinates["SwitchOver"][1], 1.75)
             click(coordinates[f"Boss{self.v[-1]}"][0], coordinates[f"Boss{self.v[-1]}"][1], 2)
+            if RECORD_ITEM and RECORD_LOG:
+                self.record_logger(None, item_list, None)
             self.victory()
-            # self.record_logger(self, None, item_list, None)
 
     def start(self):
         """
@@ -512,10 +515,10 @@ class AzurlaneLevel7_2():
         :return:
         """
         time.sleep(1)
-        click(coordinates["7-2Select"][0], coordinates["7-2Select"][1], 0.75)
-        click(coordinates["ImmediateStart"][0], coordinates["ImmediateStart"][1], 0.75)
-        click(coordinates["WeighAnchor"][0], coordinates["WeighAnchor"][1], 1)
-        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1], 3)
+        click(coordinates["7-2Select"][0], coordinates["7-2Select"][1], 0.6)
+        click(coordinates["ImmediateStart"][0], coordinates["ImmediateStart"][1], 0.6)
+        click(coordinates["WeighAnchor"][0], coordinates["WeighAnchor"][1], 0.9)
+        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1], 2.75)
 
     @execute_time
     def run(self):

@@ -3,6 +3,7 @@ import os
 
 # mode
 RECORD_ITEM = True
+RECORD_LOG = False
 
 # path 
 PATH = {
