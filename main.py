@@ -32,7 +32,8 @@ object_code = {
     "t3": 9,
     "item": 10,
     "scrap": 11,
-    "team1": 12
+    "team1": 12,
+    "obstacle": 99
 }
 
 # enemy priority ranking map
@@ -236,7 +237,7 @@ class AzurlaneLevel7_2():
         """
         map_image = pyautogui.screenshot()
         for i, ei in enumerate(object_index[:14]):
-            if self.v[i] == 0:
+            if self.v[i] == object_code["blank"] or self.v[i] == object_code["obstacle"]:
                 category_flag, level_flag, category = False, False, 0
                 level_color = [get_color(map_image, coordinates[ei[1]][0] + offsets[f"level{i}"][0], coordinates[ei[1]][1] + offsets[f"level{i}"][1]) for i in range(1, 4)]
                 category_color = get_color(map_image, coordinates[ei[1]][0] + offsets["category"][0], coordinates[ei[1]][1] + offsets["category"][1])
@@ -250,8 +251,11 @@ class AzurlaneLevel7_2():
                         category += j + 1
                         level_flag = True
                         break
-                if category_flag and level_flag:
-                    self.v[i] = category
+                if category_flag:
+                    if level_flag:
+                        self.v[i] = category
+                    else:
+                        self.v[i] = object_code["obstacle"]
         if self.index == 2:
             team2_position1_color = get_color(map_image, coordinates["Start1"][0], coordinates["Start1"][1])
             team2_position2_color = get_color(map_image, coordinates["Start2"][0], coordinates["Start2"][1])
