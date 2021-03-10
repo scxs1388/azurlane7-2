@@ -76,10 +76,10 @@ coordinates = {
     "Boss2": [665, 620],
     "7-2Select": [850, 400],
     "ImmediateStart": [1200, 640],
-    "WeighAnchor": [1275, 700],
+    "WeighAnchor": [1285, 710],
     "Withdraw": [1100, 970],
     "SwitchOver": [1250, 970],
-    "AssignmentVerify": [970, 610],
+    "AssignmentVerify": [970, 615],  # 970, 615
     "VictoryPoint": [1350, 275],
     "VictoryConfirm": [1300, 740],
     "DefeatConfirm": [950, 700],
@@ -201,6 +201,9 @@ def click(x, y, interval):
 class AzurlaneLevel7_2():
     def __init__(self, number):
         self.v = [object_code["blank"] for i in range(15)] + [object_code["item"] for i in range(4)] + [object_code["blank"]]
+        # bug fix
+        # self.v[11] = object_code["obstacle"]
+        self.v[12] = object_code["obstacle"]
         self.index = 0
         self.savedir = ""
         if RECORD_ITEM:
@@ -215,10 +218,10 @@ class AzurlaneLevel7_2():
             [2, 3, 7, 8, 10, 17, 16],  # 4
             [6, 9, 11, 15],  # 5
             [18, 5, 7, 9, 11, 16],  # 6
-            [2, 8, 3, 4, 10, 12, 13, 16, 18, 6],  # 7
+            [2, 8, 3, 4, 10, 18, 12, 13, 16, 6],  # 7
             [2, 3, 7, 10, 17, 16],  # 8, 4
             [5, 6, 11, 18],  # 9
-            [7, 8, 12, 13, 2, 16, 18, 3, 4],  # 10
+            [7, 8, 18, 12, 13, 2, 16, 3, 4],  # 10
             [5, 6, 9, 12, 18],  # 11
             [11, 14, 13, 18],  # 12
             [7, 12, 18],  # 13, 10
@@ -446,8 +449,8 @@ class AzurlaneLevel7_2():
         current_image = pyautogui.screenshot()
         if color_match(get_color(current_image, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SR"]):
             click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.0)
-        click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 2)
-        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1], 2.75)
+        click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.5)
+        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1] + 100, 2.75)  # y+100
 
 
     def defeat(self):
@@ -521,8 +524,8 @@ class AzurlaneLevel7_2():
         time.sleep(1)
         click(coordinates["7-2Select"][0], coordinates["7-2Select"][1], 0.6)
         click(coordinates["ImmediateStart"][0], coordinates["ImmediateStart"][1], 0.6)
-        click(coordinates["WeighAnchor"][0], coordinates["WeighAnchor"][1], 0.9)
-        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1], 2.75)
+        click(coordinates["WeighAnchor"][0], coordinates["WeighAnchor"][1], 1.5)
+        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1] + 100, 2.5)  # y+100
 
     @execute_time
     def run(self):
@@ -584,7 +587,26 @@ def check_dir():
         print("Done")
 
 
-def main(start, count):
+def check_commit_image():
+    commit_image_dir_list = os.listdir(PATH["commit_image_dir"])
+    for commit_image_dir in commit_image_dir_list:
+        current_dir = os.path.join(PATH["commit_image_dir"], commit_image_dir)
+        if len(os.listdir(current_dir)) < 5:
+            shutil.rmtree(current_dir)
+            print(f"Remove invalid directory {commit_image_dir}")
+    commit_image_dir_list = [int(i) for i in os.listdir(PATH["commit_image_dir"])]
+    commit_image_dir_list.sort()
+    target_image_dir_list = [i for i in range(1, len(commit_image_dir_list) + 1)]
+    for commit_p in range(len(target_image_dir_list)):
+        if target_image_dir_list[commit_p] != commit_image_dir_list[commit_p]:
+            src_dir = os.path.join(PATH["commit_image_dir"], str(commit_image_dir_list[-1]))
+            dst_dir = os.path.join(PATH["commit_image_dir"], str(target_image_dir_list[commit_p]))
+            os.rename(src_dir, dst_dir)
+            print(f"Rename {commit_image_dir_list[-1]} to {target_image_dir_list[commit_p]}")
+            commit_image_dir_list[commit_p], commit_image_dir_list[commit_p + 1:] = commit_image_dir_list[-1], commit_image_dir_list[commit_p: -1]
+
+
+def main(start, count, retry):
     """
     Main Function
     :param count: 7-2 times
@@ -597,9 +619,19 @@ def main(start, count):
             level = AzurlaneLevel7_2(index)
             level.run()
             index += 1
+            retry = 5
+        check_commit_image()
     except SevereDamageException:
         level.defeat()
-        main(index + 1, count - index + start - 1)
+        check_commit_image()
+        main(index + 1, count - index + start - 1, retry)
+    # except IndexError:
+    #     print(f"Network connection error. The program will restart in {retry} seconds...")
+    #     time.sleep(retry)
+    #     click(coordinates["Withdraw"][0], coordinates["Withdraw"][1], 1)
+    #     click(coordinates["Confirm"][0], coordinates["Confirm"][1], 5)
+    #     check_commit_image()
+    #     main(index, count - index + start, retry + 5)
 
 
 if __name__ == "__main__":
@@ -611,11 +643,12 @@ if __name__ == "__main__":
             from submit_data import update_local_submit_data
             from settings import STANDARD_COMMIT_DATA_DICT
             check_dir()
+            check_commit_image()
         text = pyautogui.prompt(text='请输入需要通关的次数(必须是正整数)', title='输入', default='50')
         if text.isdigit():
             cnt = int(text)
             print(f"Target: {cnt} Times")
-            main(1, cnt)
+            main(1, cnt, 5)
         else:
             raise RuntimeError
     except RuntimeError:
