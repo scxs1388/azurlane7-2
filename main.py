@@ -509,10 +509,11 @@ class AzurlaneLevel7_2():
             for i, item in enumerate(item_list):
                 self.move(item, 0.25)
                 if RECORD_ITEM:
+                    time.sleep(0.25)
                     self.save_image(i + 1)
-                time.sleep(1.5)
+                time.sleep(1.25)
                 click(960, 810, 1.0)
-            click(coordinates["SwitchOver"][0], coordinates["SwitchOver"][1], 1.75)
+            click(coordinates["SwitchOver"][0], coordinates["SwitchOver"][1], 2.2)
             click(coordinates[f"Boss{self.v[-1]}"][0], coordinates[f"Boss{self.v[-1]}"][1], 2)
             if RECORD_ITEM and RECORD_LOG:
                 self.record_logger(None, item_list, None)
