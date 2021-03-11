@@ -131,7 +131,7 @@ category_colors = {
     "F4": ["EBE9EE", "484648", "D1AB66"],
     "F5": ["DCDDE2", "403D40", "C19852"],
     "G2": ["ECE8EC", "3A343A", "D1C071"],
-    "G3": ["ECE8EC", "434343", "C9A65A"]
+    "G3": ["ECE8EC", "434343", "CFAE64"]  # C9A65A
 }
 
 # RGB colors for functional recognition
@@ -294,11 +294,13 @@ class AzurlaneLevel7_2():
             return enemy_list
         else:
             item_list = []
-            for c in range(4):
+            addone_flag = True
+            while addone_flag:
+            # for c in range(4):
                 addone_flag = False
                 queue = []
                 flag = [False for i in range(len(self.v))]
-                if c == 0:
+                if len(item_list) == 0:
                     queue.append([self.v.index(object_code["team1"]), [self.v.index(object_code["team1"])]])
                     flag[self.v.index(object_code["team1"])] = True
                 else:
@@ -421,7 +423,7 @@ class AzurlaneLevel7_2():
             target_x = coordinates[object_index[target[1][i]][1]][0] + offsets["move"][0]
             target_y = coordinates[object_index[target[1][i]][1]][1] + offsets["move"][1]
             distance = abs(object_index[target[1][i]][0][0] - object_index[target[1][i - 1]][0][0]) + abs(object_index[target[1][i]][0][1] - object_index[target[1][i - 1]][0][1])
-            click(target_x, target_y, (distance + 0.8) / 2 + delay)
+            click(target_x, target_y, (distance + 1.1) / 2 + delay)
 
     def victory(self):
         """
@@ -450,7 +452,7 @@ class AzurlaneLevel7_2():
         if color_match(get_color(current_image, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SR"]):
             click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.0)
         click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.5)
-        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1] + 100, 2.75)  # y+100
+        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1] + 100, 3)  # y+100
 
 
     def defeat(self):
