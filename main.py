@@ -513,7 +513,7 @@ class AzurlaneLevel7_2():
                     self.save_image(i + 1)
                 time.sleep(1.25)
                 click(960, 810, 1.0)
-            click(coordinates["SwitchOver"][0], coordinates["SwitchOver"][1], 2.2)
+            click(coordinates["SwitchOver"][0], coordinates["SwitchOver"][1], 2)
             click(coordinates[f"Boss{self.v[-1]}"][0], coordinates[f"Boss{self.v[-1]}"][1], 2)
             if RECORD_ITEM and RECORD_LOG:
                 self.record_logger(None, item_list, None)
@@ -525,8 +525,8 @@ class AzurlaneLevel7_2():
         :return:
         """
         time.sleep(1)
-        click(coordinates["7-2Select"][0], coordinates["7-2Select"][1], 0.6)
-        click(coordinates["ImmediateStart"][0], coordinates["ImmediateStart"][1], 0.6)
+        click(coordinates["7-2Select"][0], coordinates["7-2Select"][1], 0.85)
+        click(coordinates["ImmediateStart"][0], coordinates["ImmediateStart"][1], 0.85)
         click(coordinates["WeighAnchor"][0], coordinates["WeighAnchor"][1], 1.5)
         click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1] + 100, 2.5)  # y+100
 
