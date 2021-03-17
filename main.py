@@ -440,7 +440,7 @@ class AzurlaneLevel7_2():
             duration_time += interval
             current_image = pyautogui.screenshot()
             victory_point_color = get_color(current_image, coordinates["VictoryPoint"][0], coordinates["VictoryPoint"][1])
-            if color_match(victory_point_color, function_colors["VictoryPoint"]) or duration_time >= 180:
+            if color_match(victory_point_color, function_colors["VictoryPoint"]):  #  or duration_time >= 180
                 victory_flag = True
             if color_match(victory_point_color, function_colors["DefeatPoint"]):
                 raise SevereDamageException()
@@ -452,7 +452,10 @@ class AzurlaneLevel7_2():
         if color_match(get_color(current_image, coordinates["SRPoint"][0], coordinates["SRPoint"][1]), function_colors["SR"]):
             click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.0)
         click(coordinates["VictoryConfirm"][0], coordinates["VictoryConfirm"][1], 1.5)
-        click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1] + 100, 3)  # y+100
+        if self.index == 6:
+            click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1], 3)
+        else:
+            click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1] + 100, 3)  # y+100
 
 
     def defeat(self):
@@ -524,9 +527,9 @@ class AzurlaneLevel7_2():
         Enter level 7-2
         :return:
         """
-        time.sleep(1)
-        click(coordinates["7-2Select"][0], coordinates["7-2Select"][1], 0.85)
-        click(coordinates["ImmediateStart"][0], coordinates["ImmediateStart"][1], 0.85)
+        time.sleep(1.8)
+        click(coordinates["7-2Select"][0], coordinates["7-2Select"][1], 0.9)
+        click(coordinates["ImmediateStart"][0], coordinates["ImmediateStart"][1], 0.91)
         click(coordinates["WeighAnchor"][0], coordinates["WeighAnchor"][1], 1.5)
         click(coordinates["AssignmentVerify"][0], coordinates["AssignmentVerify"][1] + 100, 2.5)  # y+100
 
